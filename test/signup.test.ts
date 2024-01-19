@@ -1,4 +1,6 @@
-import { AccountService, DatabaseConnection } from '../src/signup';
+import { AccountDAO } from '../src/Dao/AccountDAO';
+import { DbConnection } from '../src/postgree/DbConnection';
+import { AccountService } from '../src/signup';
 const user = {
 	name: 'Eduardo Ferreira',
 	email: '',
@@ -10,17 +12,17 @@ const user = {
 
 describe('AccountService', () => {
 	let accountService: AccountService;
-	let databaseConnection: DatabaseConnection;
+	let databaseConnection: DbConnection;
+	let accountDAO: AccountDAO;
 	
 
 	beforeEach(() => {
-		databaseConnection = new DatabaseConnection();
-		accountService = new AccountService(databaseConnection);
+		databaseConnection = new DbConnection();
+		accountDAO = new AccountDAO(databaseConnection);
+		accountService = new AccountService(databaseConnection, accountDAO);
 	});
 	
-	test("Deve registrar user: %s", async function () {
-		// mockDbConnection = new DatabaseConnection()
-		
+	test("Deve registrar user: %s", async function () {	
 		const updatedUser = { ...user, email: `teste${Math.random() * 100}@teste.com` };
 		const account = await accountService.signup(updatedUser);
 		expect(account).toHaveProperty('accountId')
